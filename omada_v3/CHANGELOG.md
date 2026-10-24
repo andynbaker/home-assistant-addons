@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.17-7
+
+- Fetch fresh upstream response bodies rather than reusing a 304 response for cached, unrewritten JavaScript.
+- Add a regression test for browser cache-validation headers.
+
 ## 3.2.17-6
 
 - Fix blank ingress pages by rewriting Omada's application/x-javascript responses.

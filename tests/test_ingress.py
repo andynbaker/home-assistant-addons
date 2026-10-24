@@ -30,6 +30,11 @@ class Controller(http.server.BaseHTTPRequestHandler):
         pass
 
     def do_GET(self):
+        if self.path == "/js/legacy.js" and (
+                self.headers.get("If-Modified-Since") or self.headers.get("If-None-Match")):
+            self.send_response(304)
+            self.end_headers()
+            return
         if self.path == "/":
             self.send_response(302)
             self.send_header("Location", "https://127.0.0.1:8043/login")
@@ -166,6 +171,14 @@ class IngressTests(unittest.TestCase):
         self.assertEqual(headers["Content-Type"], "application/x-javascript")
         self.assertIn((PREFIX + "/web/v1/controller").encode(), body)
         self.assertIn((PREFIX + "/api/user/login").encode(), body)
+
+    def test_cached_unrewritten_script_is_replaced(self):
+        headers = {"X-Ingress-Path": PREFIX,
+                   "If-Modified-Since": "Thu, 04 Aug 2022 16:09:10 GMT",
+                   "If-None-Match": '"old-unrewritten-script"'}
+        status, _, body = self.request("/js/legacy.js", headers=headers)
+        self.assertEqual(status, 200)
+        self.assertIn((PREFIX + "/web/v1/controller").encode(), body)
 
     def test_access_restrictions_and_path_normalization(self):
         self.assertEqual(self.request("/login", source="127.0.0.2")[0], 403)
