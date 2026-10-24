@@ -8,10 +8,24 @@ This is an experimental add-on configuration, not a rebuilt controller image.
 It has not yet been run on a Home Assistant host. The legacy image is archived
 and may contain unpatched vulnerabilities; keep its interfaces on a trusted LAN.
 
+## Install from the public repository
+
+1. Open **Settings → Apps → Install app** (or the **Add-on Store**).
+2. Open the top-right menu, choose **Repositories**, and add:
+   `https://github.com/andynbaker/home-assistant-omada-v3`
+3. Install **Omada Controller v3 (mbentley)**, review its options, and start it.
+4. Choose **Open Web UI** to complete controller setup.
+
+## Future add-ons
+
+This repository can host additional add-ons. Give each add-on its own folder
+and a unique slug in its `config.yaml`, alongside `omada_v3`. Keep the repository
+URL stable after installation: changing it changes Home Assistant's repository
+ID and makes its add-ons appear as different installations.
+
 ## Local installation
 
-The intended GitHub repository is private. Use the local installation method
-below; Home Assistant cannot clone it anonymously through the repository URL.
+You can also install locally using the steps below.
 
 1. Copy the entire `omada_v3` folder into `/addons` on your Home Assistant host,
    giving `/addons/omada_v3/config.yaml`. This is the local add-ons directory,
