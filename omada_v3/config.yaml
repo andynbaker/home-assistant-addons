@@ -1,5 +1,5 @@
 name: Omada Controller v3 (mbentley)
-version: "3.2.17-2"
+version: "3.2.17-3"
 slug: omada_v3
 description: Legacy TP-Link Omada 3.2 controller using the mbentley image
 url: https://github.com/andynbaker/home-assistant-omada-v3

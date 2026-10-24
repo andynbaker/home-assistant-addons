@@ -77,8 +77,8 @@ documentation for remaining validation work.
 ## Omada implementation notes
 
 The Omada add-on builds a small logging wrapper around
-`mbentley/omada-controller:3.2`. Omada's original startup command is inherited
-from that image. The wrapper streams diagnostic logs to Home Assistant and
+`mbentley/omada-controller:3.2`. Omada's original Java startup command is explicitly preserved
+in the Dockerfile. The wrapper streams diagnostic logs to Home Assistant and
 forwards shutdown signals. Add-on versions are independent of the upstream
 image tag. String options are passed as environment variables using
 `legacy: true`.

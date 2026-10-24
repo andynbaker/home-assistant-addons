@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.17-3
+
+- Restore the upstream Java CMD explicitly after overriding ENTRYPOINT.
+- Fix the logging wrapper exiting with gosu usage instead of launching Omada.
+
 ## 3.2.17-2
 
 - Stream server logs into Home Assistant's Log tab.
