@@ -1,61 +1,90 @@
-# Omada Controller v3 Home Assistant add-on
+# Andy's Home Assistant Add-ons
 
-Runs the existing `mbentley/omada-controller:3.2` image in Home Assistant OS
-with Supervisor. Upstream identifies this tag as Omada **3.2.17** and lists
-amd64 and arm64 support. Home Assistant calls arm64 `aarch64`.
+A public collection of Home Assistant add-ons maintained by
+[andynbaker](https://github.com/andynbaker). This repository hosts Omada
+Controller v3 and will serve as a home for future add-ons.
 
-This is an experimental add-on configuration, not a rebuilt controller image.
-It has not yet been run on a Home Assistant host. The legacy image is archived
-and may contain unpatched vulnerabilities; keep its interfaces on a trusted LAN.
+## Available add-ons
 
-## Install from the public repository
+| Add-on | Description | Status | Architectures |
+| --- | --- | --- | --- |
+| [Omada Controller v3](omada_v3/DOCS.md) | Legacy TP-Link Omada 3.2.17 controller using `mbentley/omada-controller:3.2`. | Experimental; runtime testing pending | amd64, aarch64 |
+
+Omada v3 uses archived software that may contain unpatched vulnerabilities.
+Keep its interfaces on a trusted LAN. See its
+[documentation](omada_v3/DOCS.md) for configuration, storage, backups, migration,
+and initial acceptance checks.
+
+## Add this repository to Home Assistant
+
+[![Add repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fandynbaker%2Fhome-assistant-omada-v3)
+
+Or add it manually:
 
 1. Open **Settings → Apps → Install app** (or the **Add-on Store**).
-2. Open the top-right menu, choose **Repositories**, and add:
-   `https://github.com/andynbaker/home-assistant-omada-v3`
-3. Install **Omada Controller v3 (mbentley)**, review its options, and start it.
-4. Choose **Open Web UI** to complete controller setup.
+2. Open the top-right menu and choose **Repositories**.
+3. Add `https://github.com/andynbaker/home-assistant-omada-v3`.
+4. Select the add-on you want, read its documentation, and install it.
+5. Review its options, start it, and complete any add-on-specific setup.
 
-## Future add-ons
+A Home Assistant installation with Supervisor is required. Home Assistant
+Container installations without Supervisor cannot install add-ons.
 
-This repository can host additional add-ons. Give each add-on its own folder
-and a unique slug in its `config.yaml`, alongside `omada_v3`. Keep the repository
-URL stable after installation: changing it changes Home Assistant's repository
-ID and makes its add-ons appear as different installations.
+The repository URL currently retains the name of its first add-on. All future
+add-ons will be available through this same URL.
 
 ## Local installation
 
-You can also install locally using the steps below.
+For development or a local installation, copy the desired add-on folder into
+`/addons` on your Home Assistant host. For example, Omada should be at
+`/addons/omada_v3/config.yaml`. This is the local add-ons directory, not a
+folder inside Home Assistant's configuration directory.
 
-1. Copy the entire `omada_v3` folder into `/addons` on your Home Assistant host,
-   giving `/addons/omada_v3/config.yaml`. This is the local add-ons directory,
-   not the `addons` directory inside Home Assistant's configuration folder.
-2. Open **Settings → Apps** (called **Add-ons** on older installations), open
-   the store, and choose **Check for updates** from its menu.
-3. Find **Omada Controller v3 (mbentley)** under local add-ons and install it.
-4. Review its configuration and start it. Installation pulls the upstream image;
-   no Docker build is needed. Allow several minutes for first startup.
-5. Choose **Open Web UI**, or visit `https://HOME_ASSISTANT_LAN_IP:8043`.
-   An initial self-signed certificate warning is expected.
-6. Complete the Omada setup wizard and then enable **Start on boot** if wanted.
+Refresh the add-on store using **Check for updates**, find the add-on under
+local add-ons, and install it. Follow its documentation for setup and testing.
 
-See [the add-on documentation](omada_v3/DOCS.md) for storage, migration, and
-troubleshooting. Home Assistant Container installations without Supervisor
-cannot install add-ons.
+## Repository layout
 
-## Design and validation
+Each add-on has its own folder and a unique `slug` in its `config.yaml`.
+Shared repository metadata lives in `repository.yaml`.
 
-The Supervisor pulls `image:version`, so `version: "3.2"` deliberately matches
-the upstream tag. Do not change this to an add-on release number such as `1.0.0`.
-The controller's entrypoint and command come directly from the upstream image.
-String options are forwarded as environment variables through `legacy: true`.
-The add-on requests neither Supervisor API access nor privileged host access.
+```text
+repository.yaml
+README.md
+omada_v3/
+  config.yaml
+  DOCS.md
+```
 
-Before relying on it, verify on your Home Assistant host: installation and
-startup, device discovery/adoption, stop/start persistence, and a full backup
-and restore. There is no Docker executable or Home Assistant Supervisor in
-the development workspace, so those runtime checks remain outstanding.
+Future add-ons will be added as sibling folders. Each add-on documents its own
+requirements, supported architectures, configuration, and validation status.
 
-References:
-- [mbentley's archived v3/v4 documentation](https://github.com/mbentley/docker-omada-controller/blob/archive_v3_v4/README_v3_and_v4.md)
+Keep the repository URL stable after users install from it. Home Assistant
+derives the repository ID from the URL, so renaming or moving it makes its
+add-ons appear as different installations.
+
+## Support and contributions
+
+Use [GitHub Issues](https://github.com/andynbaker/home-assistant-omada-v3/issues)
+to report problems or suggest future add-ons. Include the add-on name,
+Home Assistant version, host architecture, and relevant logs with credentials
+and other private information removed.
+
+Add-ons should be tested for startup, normal operation, persistence across
+restarts, and backup restoration before being relied on. Check each add-on's
+documentation for remaining validation work.
+
+## Omada implementation notes
+
+The Omada add-on runs the upstream container directly. Its `version: "3.2"`
+matches the upstream Docker tag because Supervisor pulls `image:version`.
+Its entrypoint and command come from that image, and string options are passed
+as environment variables through `legacy: true`.
+
+Runtime testing on a Home Assistant host remains outstanding.
+
+## References
+
+- [Home Assistant repository guide](https://contributors.home-assistant.io/apps/guides/repository/)
 - [Home Assistant app configuration](https://contributors.home-assistant.io/apps/reference/configuration/)
+- [mbentley's archived Omada v3/v4 documentation](https://github.com/mbentley/docker-omada-controller/blob/archive_v3_v4/README_v3_and_v4.md)
