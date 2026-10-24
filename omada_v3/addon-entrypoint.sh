@@ -8,6 +8,11 @@ tail_pids=""
 proxy_pid=""
 stopping=false
 
+if ! python3 /omada_ports.py; then
+    echo "ERROR: Invalid or unsupported Omada port configuration."
+    exit 1
+fi
+
 if [ "${SHOW_SERVER_LOGS:-true}" = "true" ]; then
     tail -n 100 -F "$server_log" &
     tail_pids="$tail_pids $!"

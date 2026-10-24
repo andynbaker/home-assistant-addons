@@ -14,6 +14,7 @@ import shutil
 import socket
 import ssl
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -21,7 +22,9 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "omada_v3"))
 PREFIX = "/api/hassio_ingress/test-token"
+HTTPS_PORT = 18443  # Exercise ingress with a non-default controller port.
 NGINX = os.environ.get("NGINX_BIN") or shutil.which("nginx")
 
 
@@ -94,8 +97,8 @@ class IngressTests(unittest.TestCase):
             sock.bind(("127.0.0.1", 0))
             cls.port = sock.getsockname()[1]
         conf = (ROOT / "omada_v3/ingress.conf").read_text()
-        conf = conf.replace("@@INGRESS_PORT@@", str(cls.port))
-        conf = conf.replace("https://127.0.0.1:8043;",
+        conf = conf.replace("@@INGRESS_PORT@@", str(cls.port)).replace("@@MANAGE_HTTPS_PORT@@", str(HTTPS_PORT))
+        conf = conf.replace("https://127.0.0.1:%s;" % HTTPS_PORT,
                             "https://127.0.0.1:%s;" % cls.backend.server_port, 1)
         conf = conf.replace("allow 172.30.32.2;", "allow 127.0.0.1;")
         conf = conf.replace("include /etc/nginx/mime.types;", "types { text/html html; }")
@@ -159,8 +162,8 @@ class IngressTests(unittest.TestCase):
         result = json.loads(body)
         self.assertEqual(status, 200)
         self.assertEqual(result["sha256"], hashlib.sha256(payload).hexdigest())
-        self.assertEqual(result["host"], "127.0.0.1:8043")
-        self.assertEqual(result["origin"], "https://127.0.0.1:8043")
+        self.assertEqual(result["host"], "127.0.0.1:" + str(HTTPS_PORT))
+        self.assertEqual(result["origin"], "https://127.0.0.1:" + str(HTTPS_PORT))
         self.assertEqual(self.request("/download")[2], bytes(range(256)))
         headers = {"X-Ingress-Path": PREFIX, "Upgrade": "websocket", "Connection": "Upgrade"}
         self.assertEqual(self.request("/upgrade", headers=headers)[0], 101)

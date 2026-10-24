@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.2.17-8
+
+- Expose all ten port properties available in Omada v3, retaining existing defaults.
+- Apply port settings directly to the controller properties before startup.
+- Make ingress follow the configured HTTPS management port.
+- Validate port ranges and collisions, and reserve Supervisor's dynamic ingress range.
+- Document shared v3 portal ports and advanced device-port compatibility limits.
+
 ## 3.2.17-7
 
 - Fetch fresh upstream response bodies rather than reusing a 304 response for cached, unrewritten JavaScript.

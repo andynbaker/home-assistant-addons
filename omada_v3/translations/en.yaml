@@ -1,0 +1,49 @@
+configuration:
+  MANAGE_HTTP_PORT:
+    name: "HTTP port (management and portal)"
+    description: "Default 18088. Shared by the v3 management UI and HTTP portal."
+  MANAGE_HTTPS_PORT:
+    name: "HTTPS port (management and portal)"
+    description: "Default 8043. Sidebar ingress automatically follows this port."
+  PORT_APP_DISCOVERY:
+    name: "Legacy controller discovery port (UDP)"
+    description: "Default 27001. Legacy initialization property; that check is unused since v3.2.5."
+  PORT_CONTROLLER_SEARCH:
+    name: "Legacy controller search port (TCP)"
+    description: "Default 27002. Legacy initialization property; that check is unused since v3.2.5."
+  PORT_DISCOVERY:
+    name: "AP discovery port (UDP, advanced)"
+    description: "Default 29810. Access points expect this port; changing it can break discovery."
+  PORT_MANAGER_V1:
+    name: "AP management port (TCP, advanced)"
+    description: "Default 29811. Access points expect this port; keep the default unless devices and network match."
+  PORT_ADOPT_V1:
+    name: "AP adoption port (TCP, advanced)"
+    description: "Default 29812. Access points expect this port; changing it can break adoption."
+  PORT_UPGRADE_V1:
+    name: "AP upgrade port (TCP, advanced)"
+    description: "Default 29813. Coordinate changes with device firmware and network rules."
+  MONGODB_PORT:
+    name: "Internal database port (TCP)"
+    description: "Default 27217. MongoDB remains bound to 127.0.0.1."
+  RMI_PORT:
+    name: "Legacy Java RMI port (TCP)"
+    description: "Default 1099. Applies the controller's legacy RMI property when used."
+  TZ:
+    name: "Timezone"
+    description: "IANA timezone, such as America/Chicago."
+  PUID:
+    name: "User ID"
+    description: "Numeric ID as text; default 1000."
+  PGID:
+    name: "Group ID"
+    description: "Numeric ID as text; default 1000."
+  SHOW_SERVER_LOGS:
+    name: "Show server logs"
+    description: "Stream the controller log into Home Assistant."
+  SHOW_MONGODB_LOGS:
+    name: "Show database logs"
+    description: "Stream MongoDB logs into Home Assistant."
+  SMALL_FILES:
+    name: "Use small MongoDB journals"
+    description: "Enable the legacy MongoDB smallfiles option."

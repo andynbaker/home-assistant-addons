@@ -5,6 +5,7 @@ import os
 import time
 import urllib.request
 from pathlib import Path
+from omada_ports import configured_ports
 
 def ingress_port():
     token = os.environ.get("SUPERVISOR_TOKEN")
@@ -27,11 +28,17 @@ def ingress_port():
                 raise
             time.sleep(1)
 
+def render_config(template, port, environment=None):
+    ports = configured_ports(environment)
+    return template.replace("@@INGRESS_PORT@@", str(port)).replace(
+        "@@MANAGE_HTTPS_PORT@@", str(ports["MANAGE_HTTPS_PORT"]))
+
+
 def main():
     port = ingress_port()
     template = Path("/etc/omada-ingress.conf.template").read_text()
     Path("/run/omada-ingress.conf").write_text(
-        template.replace("@@INGRESS_PORT@@", str(port))
+        render_config(template, port)
     )
     print("INFO: Home Assistant ingress proxy uses port " + str(port), flush=True)
 

@@ -24,7 +24,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
       - name: Check legacy image and upstream source
@@ -43,6 +43,7 @@ jobs:
           python3 -m unittest discover -s tests -v
           docker build --pull --tag omada-v3-upstream-test ./omada_v3
           docker run --rm --entrypoint /bin/sh omada-v3-upstream-test -c 'nginx -V && python3 --version && test -x /opt/tplink/EAPController/jre/bin/java'
+          docker run --rm --env MANAGE_HTTPS_PORT=18443 --env MONGODB_PORT=27218 --entrypoint python3 omada-v3-upstream-test /omada_ports.py
       - name: Open or refresh update pull request
         if: steps.upstream.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8

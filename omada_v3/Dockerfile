@@ -4,6 +4,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 COPY ingress.conf /etc/omada-ingress.conf.template
 COPY ingress-setup.py /ingress-setup.py
+COPY omada_ports.py /omada_ports.py
 COPY addon-entrypoint.sh /addon-entrypoint.sh
 RUN chmod 755 /addon-entrypoint.sh
 ENTRYPOINT ["/addon-entrypoint.sh"]
