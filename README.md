@@ -26,6 +26,8 @@ Or add it manually:
 3. Add `https://github.com/andynbaker/home-assistant-omada-v3`.
 4. Select the add-on you want, read its documentation, and install it.
 5. Review its options, start it, and complete any add-on-specific setup.
+6. For Omada, enable **Show in sidebar** on the add-on's Info page. Its ingress
+   panel can also be used through an existing remote Home Assistant connection.
 
 A Home Assistant installation with Supervisor is required. Home Assistant
 Container installations without Supervisor cannot install add-ons.

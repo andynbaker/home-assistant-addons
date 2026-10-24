@@ -1,4 +1,9 @@
 FROM mbentley/omada-controller:3.2
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nginx-core python3 \
+    && rm -rf /var/lib/apt/lists/*
+COPY ingress.conf /etc/omada-ingress.conf.template
+COPY ingress-setup.py /ingress-setup.py
 COPY addon-entrypoint.sh /addon-entrypoint.sh
 RUN chmod 755 /addon-entrypoint.sh
 ENTRYPOINT ["/addon-entrypoint.sh"]

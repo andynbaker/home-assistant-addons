@@ -1,8 +1,8 @@
 name: Omada Controller v3 (mbentley)
-version: "3.2.17-4"
+version: "3.2.17-5"
 slug: omada_v3
 description: Legacy TP-Link Omada 3.2 controller using the mbentley image
-url: https://github.com/andynbaker/home-assistant-omada-v3
+url: https://github.com/andynbaker/home-assistant-addons
 arch:
   - amd64
   - aarch64
@@ -14,7 +14,12 @@ legacy: true
 host_network: true
 timeout: 120
 backup: cold
-webui: "https://[HOST]:[PORT:8043]"
+ingress: true
+ingress_port: 0
+ingress_stream: true
+panel_icon: mdi:access-point-network
+panel_title: Omada
+panel_admin: true
 map:
   - type: addon_config
     path: /opt/tplink/EAPController/data

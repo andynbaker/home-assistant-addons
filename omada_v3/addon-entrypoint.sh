@@ -5,6 +5,7 @@ set -u
 server_log=/opt/tplink/EAPController/logs/server.log
 mongo_log=/opt/tplink/EAPController/logs/mongod.log
 tail_pids=""
+proxy_pid=""
 stopping=false
 
 if [ "${SHOW_SERVER_LOGS:-true}" = "true" ]; then
@@ -14,6 +15,26 @@ fi
 if [ "${SHOW_MONGODB_LOGS:-false}" = "true" ]; then
     tail -n 100 -F "$mongo_log" &
     tail_pids="$tail_pids $!"
+fi
+
+# Fail visibly if the proxy cannot be configured or bind its allocated port.
+if ! python3 /ingress-setup.py; then
+    echo "ERROR: Could not configure Home Assistant ingress."
+    for pid in $tail_pids; do kill "$pid" 2>/dev/null || true; done
+    exit 1
+fi
+if ! nginx -t -c /run/omada-ingress.conf; then
+    for pid in $tail_pids; do kill "$pid" 2>/dev/null || true; done
+    exit 1
+fi
+nginx -c /run/omada-ingress.conf -g 'daemon off;' &
+proxy_pid=$!
+# Detect immediate bind/configuration failures before starting the controller.
+sleep 1
+if ! kill -0 "$proxy_pid" 2>/dev/null; then
+    echo "ERROR: Home Assistant ingress proxy failed to start."
+    for pid in $tail_pids; do kill "$pid" 2>/dev/null || true; done
+    exit 1
 fi
 
 /entrypoint.sh "$@" &
@@ -32,6 +53,11 @@ while :; do
     # A trapped signal can interrupt wait before the controller has exited.
     kill -0 "$controller_pid" 2>/dev/null || break
 done
+
+if [ -n "$proxy_pid" ]; then
+    kill -TERM "$proxy_pid" 2>/dev/null || true
+    wait "$proxy_pid" 2>/dev/null || true
+fi
 
 for pid in $tail_pids; do
     kill "$pid" 2>/dev/null || true

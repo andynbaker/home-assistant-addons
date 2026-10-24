@@ -13,8 +13,8 @@
   legacy small journal files option when true. Default is `"false"`.
 
 Restart the add-on after changing options. The HTTP management port follows
-MANAGE_HTTP_PORT. Keep HTTPS on 8043 in Omada's own UI so the Open Web UI
-button continues to work.
+MANAGE_HTTP_PORT. Keep HTTPS on 8043 in Omada's own UI so the ingress proxy
+can reach the controller.
 
 The environment also preserves `PORTAL_HTTP_PORT=8088` and
 `PORTAL_HTTPS_PORT=8843` from the existing Compose configuration. Upstream
@@ -32,9 +32,9 @@ its portal; changing the management port does not change portal settings. The ad
 be remapped through Supervisor when using host networking. Across VLANs,
 configure routing and discovery according to your access points' requirements.
 
-Open Web UI uses your Home Assistant hostname. If that hostname points to a
-remote proxy that only serves Home Assistant, use the host's LAN IP directly.
-Omada has its own login; Home Assistant ingress is not configured.
+Open Web UI opens the ingress panel inside Home Assistant. For direct LAN
+access, use https://HOME_ASSISTANT_LAN_IP:8043.
+Omada keeps its own login inside Home Assistant ingress.
 
 ## Storage and backups
 
@@ -100,3 +100,28 @@ set MANAGE_HTTP_PORT to 18088. Confirm startup logs say http.connector.port
 is being changed to 18088. This changes the actual Omada listener, not a
 Docker port mapping. If another Omada controller runs on the same host, stop
 it before starting this add-on: device-management ports also overlap.
+
+## Sidebar and remote access (3.2.17-5)
+
+Update the add-on, start it, then enable **Show in sidebar** on its Info page.
+The **Omada** sidebar entry and **Open Web UI** use Home Assistant ingress.
+Sign in with your Omada credentials inside the panel; Home Assistant's login
+protects the ingress route, but does not replace the controller account.
+
+When away from home, open your existing remote Home Assistant URL or Companion
+App, sign in, and select Omada. Home Assistant must already be remotely
+reachable (for example through Home Assistant Cloud or your existing VPN).
+Ingress does not create a remote connection on its own. No additional router
+port forwarding for Omada is required.
+
+The proxy uses a dynamically allocated host port, accepts only Supervisor
+connections from 172.30.32.2, and rewrites Omada's root routes, redirects, and
+cookie paths for ingress. The local controller's self-signed TLS certificate
+is used only over loopback; the browser uses Home Assistant's connection.
+Direct LAN access on 8043 remains available. The sidebar is administrator-only.
+
+After updating, test login/logout, navigation, settings, and uploads/downloads
+both locally and over your remote Home Assistant connection. These end-to-end
+checks require a running Home Assistant host and remain pending. If you see
+502 briefly during controller startup, wait for Omada to finish initializing.
+If it persists, check the Log tab for controller or proxy errors.

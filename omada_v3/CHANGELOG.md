@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.2.17-5
+
+- Add Home Assistant ingress and an administrator-only Omada sidebar panel.
+- Proxy the v3 UI with root-route, redirect, cookie, and WebSocket handling.
+- Use a Supervisor-allocated port and restrict access to Supervisor.
+- Keep Omada login, existing data storage, and direct LAN access on 8043.
+
 ## 3.2.17-4
 
 - Make the HTTP management port configurable, defaulting to 18088.
