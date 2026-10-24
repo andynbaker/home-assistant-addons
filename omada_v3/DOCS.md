@@ -17,8 +17,8 @@ the Open Web UI button continues to work.
 The environment also preserves `PORTAL_HTTP_PORT=8088` and
 `PORTAL_HTTPS_PORT=8843` from the existing Compose configuration. Upstream
 documents that Omada 3.2 ignores these two variables; portal settings must be
-managed in the controller itself. The image determines whether the logging
-and UID/GID variables are supported by this archived tag.
+managed in the controller itself. The add-on wrapper implements the logging switches; the upstream image handles
+UID/GID settings.
 
 ## Network
 
@@ -74,3 +74,19 @@ against the same devices. Do not copy a live MongoDB directory or restore a
 If installation cannot pull `mbentley/omada-controller:3.2`, record the full
 Supervisor error and host architecture. Upstream tag availability and actual
 compatibility with current Home Assistant hosts have not been runtime verified.
+
+## Troubleshooting without host-console access
+
+Version 3.2.17-2 streams server.log into Home Assistant's Log tab. Enable
+SHOW_MONGODB_LOGS (the string "true") for live MongoDB logs too. After a failed
+startup, both logs are printed automatically, regardless of the live switches.
+A tail message saying a log does not yet exist is normal on the first startup.
+
+After updating, start the add-on and open its Log tab. Copy the error lines
+under "Recent diagnostic logs" when reporting startup failures. The wrapper
+adds visibility; it does not by itself resolve a controller startup failure.
+
+This version builds locally from mbentley/omada-controller:3.2. The first update
+can take longer while Home Assistant downloads the base image and builds the
+small wrapper. Update through the add-on store; do not uninstall, as that may
+remove controller data. The controller data mount is unchanged.

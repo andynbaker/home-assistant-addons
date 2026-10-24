@@ -76,10 +76,12 @@ documentation for remaining validation work.
 
 ## Omada implementation notes
 
-The Omada add-on runs the upstream container directly. Its `version: "3.2"`
-matches the upstream Docker tag because Supervisor pulls `image:version`.
-Its entrypoint and command come from that image, and string options are passed
-as environment variables through `legacy: true`.
+The Omada add-on builds a small logging wrapper around
+`mbentley/omada-controller:3.2`. Omada's original startup command is inherited
+from that image. The wrapper streams diagnostic logs to Home Assistant and
+forwards shutdown signals. Add-on versions are independent of the upstream
+image tag. String options are passed as environment variables using
+`legacy: true`.
 
 Runtime testing on a Home Assistant host remains outstanding.
 
