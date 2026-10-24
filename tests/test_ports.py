@@ -18,7 +18,7 @@ class PortTests(unittest.TestCase):
         self.directory = Path(self.tmp.name)
         fixtures = {
             "jetty.properties": "# jetty\nhttp.connector.port=8088\nhttps.connector.port=8043\n",
-            "netty.properties": "controller.discovery.port=27001\ncontroller.search.port=27002\n"
+            "netty.properties": "# 配置\ncontroller.discovery.port=27001\ncontroller.search.port=27002\n"
                                 "eap.discovery.port=29810\neap.manage.port=29811\n"
                                 "eap.adopt.port=29812\neap.upgrade.port=29813\n",
             "mongodb.properties": 'eap.mongod.port=27217\neap.mongod.args=--port ${eap.mongod.port} --bind_ip 127.0.0.1\n',
@@ -35,6 +35,7 @@ class PortTests(unittest.TestCase):
             self.assertEqual(actual[name], int(custom[name]))
         self.assertIn("--bind_ip 127.0.0.1", (self.directory / "mongodb.properties").read_text())
         self.assertIn("eap.language=en", (self.directory / "eap.properties").read_text())
+        self.assertIn("# 配置", (self.directory / "netty.properties").read_text(encoding="utf-8"))
         # Settings change on every restart, even when the old values weren't defaults.
         apply_ports(self.directory, {"MANAGE_HTTP_PORT": "19088"})
         self.assertIn("http.connector.port=19088", (self.directory / "jetty.properties").read_text())

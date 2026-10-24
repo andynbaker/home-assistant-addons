@@ -47,7 +47,7 @@ def apply_ports(directory, environment=None):
         path = directory / filename
         text = contents.get(path)
         if text is None:
-            text = path.read_text()
+            text = path.read_text(encoding="utf-8")
         pattern = r"(?m)^[ \t]*" + re.escape(key) + r"[ \t]*=.*$"
         text, count = re.subn(pattern, key + "=" + str(ports[name]), text)
         if count != 1:
@@ -55,7 +55,7 @@ def apply_ports(directory, environment=None):
         contents[path] = text
     # Validate all files before changing any. Never touch the controller database.
     for path, text in contents.items():
-        path.write_text(text)
+        path.write_text(text, encoding="utf-8")
     return ports
 
 
