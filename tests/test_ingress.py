@@ -43,9 +43,11 @@ class Controller(http.server.BaseHTTPRequestHandler):
             return
         body = b'<script src="js/app.js"></script><a href="/login">Login</a>'
         mime = "text/html"
-        if self.path == "/js/app.js":
+        if self.path in ("/js/app.js", "/js/legacy.js"):
             body = b'var urls={normal:"/web/v1/controller",login:"/api/user/login"};var regex=/a/g;'
             mime = "application/javascript"
+            if self.path == "/js/legacy.js":
+                mime = "application/x-javascript"
         if self.path == "/download":
             body = bytes(range(256))
             mime = "application/octet-stream"
@@ -157,6 +159,13 @@ class IngressTests(unittest.TestCase):
         self.assertEqual(self.request("/download")[2], bytes(range(256)))
         headers = {"X-Ingress-Path": PREFIX, "Upgrade": "websocket", "Connection": "Upgrade"}
         self.assertEqual(self.request("/upgrade", headers=headers)[0], 101)
+
+    def test_legacy_omada_javascript_mime_type(self):
+        status, headers, body = self.request("/js/legacy.js")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Content-Type"], "application/x-javascript")
+        self.assertIn((PREFIX + "/web/v1/controller").encode(), body)
+        self.assertIn((PREFIX + "/api/user/login").encode(), body)
 
     def test_access_restrictions_and_path_normalization(self):
         self.assertEqual(self.request("/login", source="127.0.0.2")[0], 403)

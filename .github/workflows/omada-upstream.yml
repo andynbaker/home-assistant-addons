@@ -1,0 +1,70 @@
+name: Check Omada v3 upstream
+on:
+  schedule:
+    - cron: '23 11 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/omada-upstream.yml'
+      - 'scripts/check_omada_upstream.py'
+
+permissions:
+  contents: read
+concurrency:
+  group: omada-v3-upstream
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: github.repository == 'andynbaker/home-assistant-addons'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Check legacy image and upstream source
+        id: upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/check_omada_upstream.py
+      - name: Install integration test dependencies
+        if: steps.upstream.outputs.changed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+      - name: Test update
+        if: steps.upstream.outputs.changed == 'true'
+        run: |
+          python3 -m unittest discover -s tests -v
+          docker build --pull --tag omada-v3-upstream-test ./omada_v3
+          docker run --rm --entrypoint /bin/sh omada-v3-upstream-test -c 'nginx -V && python3 --version && test -x /opt/tplink/EAPController/jre/bin/java'
+      - name: Open or refresh update pull request
+        if: steps.upstream.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          token: ${{ github.token }}
+          branch: codex/omada-v3-upstream
+          delete-branch: true
+          add-paths: |
+            .github/omada-v3-upstream.json
+            omada_v3/Dockerfile
+            omada_v3/config.yaml
+            omada_v3/CHANGELOG.md
+          commit-message: Refresh Omada v3 upstream baseline
+          title: Refresh Omada v3 upstream image and source baseline
+          body: |
+            Checks the upstream mbentley Omada 3.2 image, its archived v3 source
+            reference, and the current legacy README.
+
+            The Docker image remains on 3.2 and is pinned by digest. This PR
+            updates the add-on version and changelog for Home Assistant.
+
+            Automated tests and an amd64 image build ran before opening this PR.
+            Review upstream source changes and test login, ingress, device
+            management, persistence, and backups on Home Assistant before merging.
+            Source code is not copied automatically. This PR does not auto-merge.

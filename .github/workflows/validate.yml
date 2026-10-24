@@ -1,0 +1,36 @@
+name: Validate Omada add-on
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'omada_v3/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'omada_v3/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Install integration test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+      - name: Run integration and update tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Build and smoke-test image
+        run: |
+          docker build --pull --tag omada-v3-ci ./omada_v3
+          docker run --rm --entrypoint /bin/sh omada-v3-ci -c 'nginx -V && python3 --version && test -x /opt/tplink/EAPController/jre/bin/java'

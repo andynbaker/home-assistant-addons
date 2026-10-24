@@ -1,4 +1,4 @@
-FROM mbentley/omada-controller:3.2
+FROM mbentley/omada-controller:3.2@sha256:6239a0408deeef32c18b0d872d887eb9d3a4c6291275bfb46db755a1fb7b5f74
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nginx-core python3 \
     && rm -rf /var/lib/apt/lists/*

@@ -87,6 +87,34 @@ image tag. String options are passed as environment variables using
 
 Runtime testing on a Home Assistant host remains outstanding.
 
+## Automated upstream checks
+
+The **Check Omada v3 upstream** GitHub Action runs daily at 11:23 UTC and can
+also be started from the repository's Actions tab using **Run workflow**.
+It checks the Docker Hub `mbentley/omada-controller:3.2` multi-architecture
+manifest, the upstream `archive_v3_v4` source reference, and the current legacy
+README in `mbentley/docker-omada-controller`.
+
+The image is pinned by digest. When the baseline changes, the action updates
+the pin, increments the add-on release number, adds a changelog entry, runs
+tests and an amd64 build, then opens or refreshes a PR on
+`codex/omada-v3-upstream`. It never follows `latest`, copies upstream source
+code automatically, or merges an update. Review source changes and test on
+Home Assistant before merging. Image manifests must retain amd64 and arm64
+support; the automated image build currently checks amd64 only.
+
+The legacy v3 source and image are archived, so checks may find no changes
+for long periods. This automation cannot provide fixes that upstream no
+longer publishes. GitHub may disable schedules after 60 days of repository
+inactivity; re-enable the workflow from Actions if that happens.
+
+The workflow uses the built-in `GITHUB_TOKEN`, with repository contents and
+pull-request write permissions only for the updater job; no personal token
+is needed. In **Settings → Actions → General → Workflow permissions**, enable
+**Allow GitHub Actions to create and approve pull requests** if GitHub blocks
+PR creation. The workflow only creates PRs; it never approves them.
+Action dependencies are pinned to commit SHAs and monitored by Dependabot.
+
 ## References
 
 - [Home Assistant repository guide](https://contributors.home-assistant.io/apps/guides/repository/)

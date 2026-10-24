@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.2.17-6
+
+- Fix blank ingress pages by rewriting Omada's application/x-javascript responses.
+- Add a regression test using the JavaScript content type confirmed on a live controller.
+- Refresh the reviewed Omada 3.2 upstream image/source baseline.
+- Pin the multi-architecture image to `sha256:6239a0408deeef32c18b0d872d887eb9d3a4c6291275bfb46db755a1fb7b5f74`.
+- Keep the controller on the legacy 3.2 series.
+
 ## 3.2.17-5
 
 - Add Home Assistant ingress and an administrator-only Omada sidebar panel.

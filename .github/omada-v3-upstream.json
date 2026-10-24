@@ -1,0 +1,8 @@
+{
+  "archived_source_commit": "336c7d42ec83b561d604e55d542264a2e94baee0",
+  "archived_source_ref": "archive_v3_v4",
+  "digest": "sha256:6239a0408deeef32c18b0d872d887eb9d3a4c6291275bfb46db755a1fb7b5f74",
+  "image": "mbentley/omada-controller:3.2",
+  "legacy_readme_blob": "012333174603ceb1f070a65429a1c80317c625a3",
+  "source_repository": "mbentley/docker-omada-controller"
+}
