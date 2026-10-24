@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.17-9
+
+- Explicitly read and write property files as UTF-8 on the legacy image.
+- Rebuild installations that received the initial 3.2.17-8 image.
+
 ## 3.2.17-8
 
 - Expose all ten port properties available in Omada v3, retaining existing defaults.
