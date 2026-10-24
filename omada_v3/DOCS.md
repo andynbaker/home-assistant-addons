@@ -2,6 +2,8 @@
 
 ## Configuration
 
+- `MANAGE_HTTP_PORT`: HTTP management port, default `18088`. Choose an unused
+  port between 1024 and 65535. HTTPS remains on 8043.
 - `TZ`: IANA timezone, default `America/Chicago`.
 - `PUID` and `PGID`: numeric user and group IDs, supplied as strings. Both
   default to `"1000"` to match the existing container configuration.
@@ -10,9 +12,9 @@
 - `SMALL_FILES`: choose the string `"true"` or `"false"`. Enables MongoDB's
   legacy small journal files option when true. Default is `"false"`.
 
-Restart the add-on after changing options. The management ports are fixed to
-8088 (HTTP) and 8043 (HTTPS). Keep these ports unchanged in Omada's own UI so
-the Open Web UI button continues to work.
+Restart the add-on after changing options. The HTTP management port follows
+MANAGE_HTTP_PORT. Keep HTTPS on 8043 in Omada's own UI so the Open Web UI
+button continues to work.
 
 The environment also preserves `PORTAL_HTTP_PORT=8088` and
 `PORTAL_HTTPS_PORT=8843` from the existing Compose configuration. Upstream
@@ -23,8 +25,10 @@ UID/GID settings.
 ## Network
 
 Host networking supports LAN broadcast discovery. Ensure another controller
-or service is not using TCP 8088, 8043, 8843, or 29811–29814, or UDP 29810.
-These are the ports in upstream's v3 example. The add-on's network ports cannot
+or service is not using TCP 18088 (or your configured HTTP management port), 8043, 8843, or 29811–29814, or UDP 29810.
+The HTTP management port differs from upstream's default of 8088 to avoid a
+confirmed conflict on the Home Assistant host. Omada v3 may still use 8088 for
+its portal; changing the management port does not change portal settings. The add-on's network ports cannot
 be remapped through Supervisor when using host networking. Across VLANs,
 configure routing and discovery according to your access points' requirements.
 
@@ -90,3 +94,9 @@ This version builds locally from mbentley/omada-controller:3.2. The first update
 can take longer while Home Assistant downloads the base image and builds the
 small wrapper. Update through the add-on store; do not uninstall, as that may
 remove controller data. The controller data mount is unchanged.
+
+If the log reports "Port 8088 is already in use", update to 3.2.17-4 and
+set MANAGE_HTTP_PORT to 18088. Confirm startup logs say http.connector.port
+is being changed to 18088. This changes the actual Omada listener, not a
+Docker port mapping. If another Omada controller runs on the same host, stop
+it before starting this add-on: device-management ports also overlap.
