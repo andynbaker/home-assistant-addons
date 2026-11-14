@@ -46,7 +46,7 @@ jobs:
           docker run --rm --env MANAGE_HTTPS_PORT=18443 --env MONGODB_PORT=27218 --entrypoint python3 omada-v3-upstream-test /omada_ports.py
       - name: Open or refresh update pull request
         if: steps.upstream.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8
         with:
           token: ${{ github.token }}
           branch: codex/omada-v3-upstream
